@@ -4,6 +4,8 @@
  */
 package com.lampfallDev;
 
+import dataBase.Connexion;
+
 /**
  *
  * @author HP
@@ -15,6 +17,7 @@ public class Login extends javax.swing.JFrame {
      */
     public Login() {
         initComponents();
+        Connexion.Db();
     }
 
     /**

@@ -16,13 +16,14 @@ import javax.swing.JOptionPane;
  */
 public class Connexion {
          
-    public static Connection Db(){
+    public static Connection Db() throws ClassNotFoundException{
         try {
             Connection con;
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/guichet_auto", "root", "");
+            JOptionPane.showMessageDialog(null, "Connexion reussi");
             return con;
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e);
             return null;
         }

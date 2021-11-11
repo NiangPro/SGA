@@ -11,8 +11,6 @@ import java.util.Date;
  * @author HP
  */
 public class Compte {
-    protected String code;
-    protected int nip;
     protected Float solde;
     protected String etat;
     protected Date dateOuverture;
@@ -35,32 +33,14 @@ public class Compte {
      * @param client
      * @param dateOuverture
      */
-    public Compte(Float solde, String etat, String code, int nip, Client client, Date dateOuverture) {
+    public Compte(Float solde, String etat, Client client, Date dateOuverture) {
         this.solde = solde;
         this.etat = etat;
-        this.code = code;
-        this.nip = nip;
         this.dateOuverture = dateOuverture;
         this.client = client;
     }
 
     
-    
-    public String getCode() {
-        return code;
-    }
-    
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public int getNip() {
-        return nip;
-    }
-    
-    public void setNip(int nip) {
-        this.nip = nip;
-    }
     public Float getSolde() {
         return solde;
     }

@@ -12,8 +12,8 @@ import java.util.Date;
  */
 public class Cheque extends Compte {
     
-    public Cheque(Float solde, String etat, String code, int nip, Client client, Date dateOuverture) {
-        super(solde, etat, code, nip, client, dateOuverture);
+    public Cheque(Float solde, String etat, Client client, Date dateOuverture) {
+        super(solde, etat, client, dateOuverture);
     }
     
 }

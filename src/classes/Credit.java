@@ -15,8 +15,8 @@ public class Credit extends Compte {
     private Float marge;
     private int existeDeja;
     
-    public Credit(Float solde, String etat, String code, int nip, Client client, Date dateOuverture) {
-        super(solde, etat, code, nip, client, dateOuverture);
+    public Credit(Float solde, String etat, Client client, Date dateOuverture) {
+        super(solde, etat, client, dateOuverture);
     }
     
 }

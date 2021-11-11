@@ -12,8 +12,8 @@ import java.util.Date;
  */
 public class Epargne extends Compte{
     
-    public Epargne(Float solde, String etat, String code, int nip, Client client, Date dateOuverture) {
-        super(solde, etat, code, nip, client, dateOuverture);
+    public Epargne(Float solde, String etat, Client client, Date dateOuverture) {
+        super(solde, etat, client, dateOuverture);
     }
     
 }

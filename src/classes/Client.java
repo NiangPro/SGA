@@ -19,6 +19,8 @@ public class Client {
     protected String telephone;
     protected String courriel;
     protected TypeSexe sexe;
+    protected String code;
+    protected int nip;
 
     public Client(String code, int nip, String nom, String prenom, String telephone, String courriel, TypeSexe sexe) {
         this.nom = nom;
@@ -26,10 +28,29 @@ public class Client {
         this.telephone = telephone;
         this.courriel = courriel;
         this.sexe = sexe;
+        this.code = code;
+        this.nip = nip;
     }
     
     public static enum TypeSexe{
         M, F
+    }
+    
+       
+    public String getCode() {
+        return code;
+    }
+    
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public int getNip() {
+        return nip;
+    }
+    
+    public void setNip(int nip) {
+        this.nip = nip;
     }
  
     public String getNom() {

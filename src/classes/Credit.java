@@ -4,14 +4,19 @@
  */
 package classes;
 
+import java.util.Date;
+
 /**
  *
  * @author Mariéme
  */
 public class Credit extends Compte {
     
-    public Credit(Float solde, String etat) {
-        super(solde, etat);
+    private Float marge;
+    private int existeDeja;
+    
+    public Credit(Float solde, String etat, String code, int nip, Client client, Date dateOuverture) {
+        super(solde, etat, code, nip, client, dateOuverture);
     }
     
 }

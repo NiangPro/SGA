@@ -9,36 +9,27 @@ package classes;
  * @author Mariéme
  */
 public class Client {
-    String code;
-    int nip;
-    String nom;
-    String prenom;
-    String telephone;
-    String courriel;
+    
 
-    public Client(String code, int nip, String nom, String prenom, String telephone, String courriel) {
-        this.code = code;
-        this.nip = nip;
+    /**
+     *
+     */
+    protected String nom;
+    protected String prenom;
+    protected String telephone;
+    protected String courriel;
+    protected TypeSexe sexe;
+
+    public Client(String code, int nip, String nom, String prenom, String telephone, String courriel, TypeSexe sexe) {
         this.nom = nom;
         this.prenom = prenom;
         this.telephone = telephone;
         this.courriel = courriel;
-    }
-
-    public String getCode() {
-        return code;
+        this.sexe = sexe;
     }
     
-public void setCode(String code) {
-        this.code = code;
-    }
-
-    public int getNip() {
-        return nip;
-    }
-    
- public void setNip(int nip) {
-        this.nip = nip;
+    public static enum TypeSexe{
+        M, F
     }
  
     public String getNom() {

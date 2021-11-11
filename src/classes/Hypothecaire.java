@@ -4,6 +4,8 @@
  */
 package classes;
 
+import java.util.Date;
+
 /**
  *
  * @author Mariéme
@@ -11,8 +13,8 @@ package classes;
 public class Hypothecaire extends Compte
 {
     
-    public Hypothecaire(Float solde, String etat) {
-        super(solde, etat);
+    public Hypothecaire(Float solde, String etat, String code, int nip, Client client, Date dateOuverture) {
+        super(solde, etat, code, nip, client, dateOuverture);
     }
     
 }

@@ -4,14 +4,16 @@
  */
 package classes;
 
+import java.util.Date;
+
 /**
  *
  * @author Mariéme
  */
 public class Cheque extends Compte {
     
-    public Cheque(Float solde, String etat) {
-        super(solde, etat);
+    public Cheque(Float solde, String etat, String code, int nip, Client client, Date dateOuverture) {
+        super(solde, etat, code, nip, client, dateOuverture);
     }
     
 }

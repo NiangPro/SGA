@@ -16,27 +16,45 @@ public class Client {
      */
     protected String nom;
     protected String prenom;
-    protected String telephone;
+    protected String tel;
     protected String courriel;
-    protected TypeSexe sexe;
+    protected String sexe;
     protected String code;
     protected int nip;
+    private int estAdmin;
 
-    public Client(String code, int nip, String nom, String prenom, String telephone, String courriel, TypeSexe sexe) {
+    public String getSexe() {
+        return sexe;
+    }
+
+    public void setSexe(String sexe) {
+        this.sexe = sexe;
+    }
+    
+
+    public Client(String code, int nip, String nom, String prenom, String tel, String courriel, String sexe, int estAdmin) {
         this.nom = nom;
         this.prenom = prenom;
-        this.telephone = telephone;
+        this.tel = tel;
         this.courriel = courriel;
         this.sexe = sexe;
         this.code = code;
         this.nip = nip;
+        this.estAdmin = estAdmin;
     }
     
     public static enum TypeSexe{
         M, F
     }
     
-       
+    public int getEstAdmin() {
+        return estAdmin;
+    }
+
+    public void setEstAdmin(int estAdmin) {
+        this.estAdmin = estAdmin;
+    }
+    
     public String getCode() {
         return code;
     }
@@ -69,12 +87,12 @@ public void setNom(String nom) {
         this.prenom = prenom;
     }
  
-    public String getTelephone() {
-        return telephone;
+    public String getTele() {
+        return tel;
     }
     
-public void setTelephone(String telephone) {
-        this.telephone = telephone;
+public void setTelephone(String tel) {
+        this.tel = tel;
     }
 
     public String getCourriel() {

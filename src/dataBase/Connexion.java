@@ -32,12 +32,10 @@ public class  Connexion {
             Class.forName("com.mysql.cj.jdbc.Driver");
             this.con = DriverManager.getConnection("jdbc:mysql://localhost/guichet_auto", "root", "");
             this.stm = this.con.createStatement();
-            
-            JOptionPane.showMessageDialog(null, "Connexion reussi");
+                      
         } catch (SQLException e) {
-            System.out.println("SQLException: " + e.getMessage());
-            System.out.println("SQLState: " + e.getSQLState());
-            System.out.println("VendorError: " + e.getErrorCode());
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+            
         }
     }
     

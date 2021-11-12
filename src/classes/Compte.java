@@ -28,8 +28,6 @@ public class Compte {
      *
      * @param solde
      * @param etat
-     * @param code
-     * @param nip
      * @param client
      * @param dateOuverture
      */

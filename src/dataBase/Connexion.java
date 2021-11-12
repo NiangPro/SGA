@@ -9,22 +9,58 @@ package dataBase;
  * @author HP
  */
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 /**
  *
  * @author HP
  */
-public class Connexion {
-         
-    public static Connection Db() throws ClassNotFoundException{
+public class  Connexion {
+    private Connection con;
+    private Statement stm;
+
+    public Connection getCon() {
+        return con;
+    }
+
+    public void setCon(Connection con) {
+        this.con = con;
+    }
+    public Connexion() throws ClassNotFoundException{
         try {
-            Connection con;
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost/guichet_auto", "root", "");
+            this.con = DriverManager.getConnection("jdbc:mysql://localhost/guichet_auto", "root", "");
+            this.stm = this.con.createStatement();
+            
             JOptionPane.showMessageDialog(null, "Connexion reussi");
-            return con;
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e);
+            System.out.println("SQLException: " + e.getMessage());
+            System.out.println("SQLState: " + e.getSQLState());
+            System.out.println("VendorError: " + e.getErrorCode());
+        }
+    }
+    
+    public ResultSet login(String code, String nip){
+        try {
+            PreparedStatement q = this.con.prepareStatement("SELECT * FROM client WHERE (code=? AND nip=?)");
+            q.setString(1, code);
+            q.setString(2, nip);
+            ResultSet res = q.executeQuery();
+            return res;
+        } catch (SQLException ex) {
+            Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        
+    }
+    
+    public ResultSet clients(){
+        try {
+            ResultSet res = this.stm.executeQuery("SELECT * FROM client");
+            return res;
+        } catch (SQLException ex) {
+            Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }

@@ -13,15 +13,33 @@ import java.util.Date;
 public class Compte {
     protected Float solde;
     protected String etat;
-    protected Date DateOuverture;
+    protected Date dateOuverture;
 
-    public Compte(Float solde, String etat) {
-        this.solde = solde;
-        this.etat = etat;
+    public Date getDateOuverture() {
+        return dateOuverture;
     }
 
-    
-    
+    public void setDateOuverture(Date dateOuverture) {
+        this.dateOuverture = dateOuverture;
+    }
+    protected Client client;
+
+    /**
+     *
+     * @param solde
+     * @param etat
+     * @param code
+     * @param nip
+     * @param client
+     * @param dateOuverture
+     */
+    public Compte(Float solde, String etat, Client client, Date dateOuverture) {
+        this.solde = solde;
+        this.etat = etat;
+        this.dateOuverture = dateOuverture;
+        this.client = client;
+    }
+
     
     public Float getSolde() {
         return solde;
@@ -37,6 +55,14 @@ public class Compte {
 
     public void setEtat(String etat) {
         this.etat = etat;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
     
     

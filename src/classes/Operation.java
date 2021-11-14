@@ -55,7 +55,7 @@ public class Operation {
     
      public int retrait(int somme) {
         montant = montant-somme;
-        return montant;
+        return somme;
     }
     
 }

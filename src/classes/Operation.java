@@ -46,6 +46,17 @@ public class Operation {
     }
             
     public static enum TypeOp{
-        Depot, Retrait, Transfer,PaiementFacture
+        Depot, Retrait, Transfert,PaiementFacture
     }
+    
+    public void depotArgent(Float montant){
+        
+    }
+    
+     public int retrait(int somme) {
+        montant = montant-somme;
+        return montant;
+    }
+    
 }
+    

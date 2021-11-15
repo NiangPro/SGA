@@ -87,11 +87,11 @@ public void setNom(String nom) {
         this.prenom = prenom;
     }
  
-    public String getTele() {
+    public String getTel() {
         return tel;
     }
     
-public void setTelephone(String tel) {
+public void setTel(String tel) {
         this.tel = tel;
     }
 

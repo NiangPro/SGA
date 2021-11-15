@@ -4,20 +4,42 @@
  */
 package dashboards;
 
+import classes.Config;
+import com.lampfallDev.Main;
+import dataBase.Connexion;
+import java.awt.Color;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 /**
  *
  * @author HP
  */
 public class ClientDashboard extends javax.swing.JFrame {
-
+    private Connexion db;
     /**
      * Creates new form ClientDashboard
      */
-    public ClientDashboard() {
+    public ClientDashboard() throws ClassNotFoundException {
         initComponents();
-        this.setResizable(false);
+         new Config(this);
+        body.setSelectedIndex(0);
+        this.db = new Connexion();
     }
 
+    
+    private void removeActive(JLabel label){
+        label.setOpaque(false);
+        label.setBackground(new Color(255,255,255));
+    }
+    
+    private void setActive(JLabel label, int index){
+        label.setOpaque(true);
+        label.setBackground(new Color(0,102,204));
+        body.setSelectedIndex(index);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,49 +50,197 @@ public class ClientDashboard extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        sidebar = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        sOpt = new javax.swing.JLabel();
+        sProfile = new javax.swing.JLabel();
+        sCompte = new javax.swing.JLabel();
+        header = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        client_name = new javax.swing.JLabel();
+        subHeader = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        body = new javax.swing.JTabbedPane();
+        bOpt = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        bCompte = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        bProfile = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("TABLEAU DE BORD CLIENT");
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(145, 145, 145)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(243, Short.MAX_VALUE))
+        sidebar.setBackground(new java.awt.Color(0, 51, 153));
+        sidebar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        sidebar.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/lg.png"))); // NOI18N
+        sidebar.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
+
+        sOpt.setBackground(new java.awt.Color(0, 102, 204));
+        sOpt.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        sOpt.setForeground(new java.awt.Color(255, 255, 255));
+        sOpt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/dashboard.png"))); // NOI18N
+        sOpt.setText("Opérations");
+        sOpt.setOpaque(true);
+        sOpt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sOptMouseClicked(evt);
+            }
+        });
+        sidebar.add(sOpt, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 130, 190, 40));
+
+        sProfile.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        sProfile.setForeground(new java.awt.Color(255, 255, 255));
+        sProfile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/profil.png"))); // NOI18N
+        sProfile.setText("Mon Profil");
+        sProfile.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sProfileMouseClicked(evt);
+            }
+        });
+        sidebar.add(sProfile, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 250, 190, 40));
+
+        sCompte.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        sCompte.setForeground(new java.awt.Color(255, 255, 255));
+        sCompte.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/compte.png"))); // NOI18N
+        sCompte.setText("Compte");
+        sCompte.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sCompteMouseClicked(evt);
+            }
+        });
+        sidebar.add(sCompte, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 190, 190, 40));
+
+        jPanel1.add(sidebar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 190, 520));
+
+        header.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/logout.png"))); // NOI18N
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
+        header.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 10, -1, -1));
+
+        client_name.setFont(new java.awt.Font("Agency FB", 0, 24)); // NOI18N
+        client_name.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/user_name.png"))); // NOI18N
+        client_name.setText("client");
+        header.add(client_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 100, 50));
+
+        jPanel1.add(header, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 0, 760, 50));
+
+        subHeader.setBackground(new java.awt.Color(0, 51, 153));
+        subHeader.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        subHeader.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/dashboard.png"))); // NOI18N
+        jLabel2.setText("Accueil");
+        subHeader.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 0, 280, 40));
+
+        jPanel1.add(subHeader, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 50, 770, 40));
+
+        jLabel9.setText("FAIRE DES OPERATIONS");
+
+        javax.swing.GroupLayout bOptLayout = new javax.swing.GroupLayout(bOpt);
+        bOpt.setLayout(bOptLayout);
+        bOptLayout.setHorizontalGroup(
+            bOptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bOptLayout.createSequentialGroup()
+                .addGap(236, 236, 236)
+                .addComponent(jLabel9)
+                .addContainerGap(409, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(366, Short.MAX_VALUE))
+        bOptLayout.setVerticalGroup(
+            bOptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bOptLayout.createSequentialGroup()
+                .addGap(162, 162, 162)
+                .addComponent(jLabel9)
+                .addContainerGap(256, Short.MAX_VALUE))
         );
+
+        body.addTab("tab1", bOpt);
+
+        jLabel7.setText("MES COMPTES");
+
+        javax.swing.GroupLayout bCompteLayout = new javax.swing.GroupLayout(bCompte);
+        bCompte.setLayout(bCompteLayout);
+        bCompteLayout.setHorizontalGroup(
+            bCompteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bCompteLayout.createSequentialGroup()
+                .addGap(212, 212, 212)
+                .addComponent(jLabel7)
+                .addContainerGap(483, Short.MAX_VALUE))
+        );
+        bCompteLayout.setVerticalGroup(
+            bCompteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bCompteLayout.createSequentialGroup()
+                .addGap(166, 166, 166)
+                .addComponent(jLabel7)
+                .addContainerGap(252, Short.MAX_VALUE))
+        );
+
+        body.addTab("tab2", bCompte);
+
+        bProfile.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel4.setText("MON PROFIL");
+        bProfile.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 170, -1, -1));
+
+        body.addTab("tab3", bProfile);
+
+        jPanel1.add(body, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 60, 770, 460));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 513, Short.MAX_VALUE)
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+        try {
+            // TODO add your handling code here:
+            new Main().setVisible(true);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ClientDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.dispose();
+    }//GEN-LAST:event_jLabel1MouseClicked
+
+    private void sOptMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sOptMouseClicked
+        // TODO add your handling code here:
+        setActive(sOpt, 0);
+        removeActive(sCompte);
+        removeActive(sProfile);
+    }//GEN-LAST:event_sOptMouseClicked
+
+    private void sCompteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sCompteMouseClicked
+        // TODO add your handling code here:
+        setActive(sCompte, 1);
+        removeActive(sOpt);
+        removeActive(sProfile);
+    }//GEN-LAST:event_sCompteMouseClicked
+
+    private void sProfileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sProfileMouseClicked
+        // TODO add your handling code here:
+        setActive(sProfile, 2);
+        removeActive(sCompte);
+        removeActive(sOpt);
+    }//GEN-LAST:event_sProfileMouseClicked
 
     /**
      * @param args the command line arguments
@@ -102,13 +272,33 @@ public class ClientDashboard extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ClientDashboard().setVisible(true);
+                try {
+                    new ClientDashboard().setVisible(true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(ClientDashboard.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel bCompte;
+    private javax.swing.JPanel bOpt;
+    private javax.swing.JPanel bProfile;
+    private javax.swing.JTabbedPane body;
+    private javax.swing.JLabel client_name;
+    private javax.swing.JPanel header;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel sCompte;
+    private javax.swing.JLabel sOpt;
+    private javax.swing.JLabel sProfile;
+    private javax.swing.JPanel sidebar;
+    private javax.swing.JPanel subHeader;
     // End of variables declaration//GEN-END:variables
 }

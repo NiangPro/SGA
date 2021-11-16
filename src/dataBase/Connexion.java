@@ -64,11 +64,12 @@ public class  Connexion {
     
     public Boolean addCompte(Compte cpt){
         try {
-            PreparedStatement q = con.prepareStatement("INSERT INTO compte(solde, etat,type,code_client) VALUES(?,?,?,?)");
+            PreparedStatement q = con.prepareStatement("INSERT INTO compte(solde, etat,type,code_client, numCpt) VALUES(?,?,?,?,?)");
             q.setFloat(1, cpt.getSolde());
             q.setInt(2, cpt.getEtat());
             q.setString(3, cpt.getType());
             q.setString(4, cpt.getCode_client());
+            q.setString(5, cpt.getNumCompte());
 
             q.execute();
                 return true;
@@ -159,7 +160,22 @@ public class  Connexion {
     
     public int nbreComptes(){
         try {
-            ResultSet res = this.stm.executeQuery("SELECT COUNT(*) as nbre FROM compte;");
+            ResultSet res = this.stm.executeQuery("SELECT COUNT(*) as nbre FROM compte");
+            if(res.next()){
+                return res.getInt("nbre");
+            }else{
+                return 0;
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
+            return 0;
+        }
+    }
+    
+    public int nbreComptesByType(String typeCpt){
+        try {
+            ResultSet res = this.stm.executeQuery("SELECT COUNT(*) as nbre FROM compte WHERE type = '"+typeCpt+"'");
             if(res.next()){
                 return res.getInt("nbre");
             }else{

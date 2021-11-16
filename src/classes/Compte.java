@@ -4,7 +4,10 @@
  */
 package classes;
 
+import dataBase.Connexion;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -12,7 +15,29 @@ import java.util.Date;
  */
 public class Compte {
     protected Float solde;
-    protected int etat;
+    protected int etat;   
+    protected Date dateOuverture;
+    protected String code_client;    
+    protected String type;
+    protected String numCompte;
+    protected Connexion db;
+
+    public Connexion getDb() {
+        return db;
+    }
+
+    public void setDb(Connexion db) {
+        this.db = db;
+    }
+
+    public String getNumCompte() {
+        return numCompte;
+    }
+
+    public void setNumCompte(String numCompte) {
+        this.numCompte = numCompte;
+    }
+
 
     public int getEtat() {
         return etat;
@@ -21,9 +46,6 @@ public class Compte {
     public void setEtat(int etat) {
         this.etat = etat;
     }
-    protected Date dateOuverture;
-    protected String code_client;    
-    protected String type;
 
     public String getType() {
         return type;
@@ -50,6 +72,18 @@ public class Compte {
         this.dateOuverture = dateOuverture;
     }
     
+    private void generateNumCompte(){
+        if(this.type.equals("Compte Credit")){
+            this.numCompte = "CCR00"+(1+this.db.nbreComptesByType(this.type));
+        }else if(this.type.equals("Compte Hypothecaire")){
+            this.numCompte = "CHT00"+(1+this.db.nbreComptesByType(this.type));
+        }else if(this.type.equals("Marge Credit")){
+            this.numCompte = "CMC00"+(1+this.db.nbreComptesByType(this.type));
+        }else{
+            this.numCompte = "CCH00"+(1+this.db.nbreComptesByType(this.type));
+        }
+    }
+    
 
     /**
      *
@@ -65,6 +99,14 @@ public class Compte {
         this.type = type;
         this.dateOuverture = dateOuverture;
         this.code_client = code_client;
+        
+        try {
+            this.db = new Connexion();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Compte.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        this.generateNumCompte();
     }
 
     

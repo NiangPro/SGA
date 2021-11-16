@@ -8,6 +8,8 @@ import dataBase.Connexion;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  *
@@ -19,7 +21,17 @@ public class Compte {
     protected Date dateOuverture;
     protected String code_client;    
     protected String type;
-    protected String numCompte;
+    protected String numCompte;    
+    protected Client client;
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
     protected Connexion db;
 
     public Connexion getDb() {
@@ -107,6 +119,16 @@ public class Compte {
         }
         
         this.generateNumCompte();
+        
+        ResultSet rs = this.db.getClientByCode(this.code_client);
+        
+        try {
+            if(rs.next()){
+                this.client = new Client(rs.getString("code"), rs.getInt("nip"), rs.getString("nom"), rs.getString("prenom"), rs.getString("tel"), rs.getString("courriel"), rs.getString("sexe"), rs.getInt("estAdmin"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Compte.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     

@@ -11,8 +11,6 @@ package dataBase;
 import classes.Client;
 import classes.Compte;
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 /**
  *
@@ -38,6 +36,22 @@ public class  Connexion {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
             
+        }
+    }
+    
+    public Boolean depot(String numCpt, float montant){
+        try {
+            PreparedStatement q = con.prepareStatement("UPDATE compte set solde = solde  + ? WHERE (numCpt = ?)");
+            
+            q.setFloat(1, montant);
+            q.setString(2, numCpt);
+
+            q.execute();
+                return true;
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+            return false;
         }
     }
     
@@ -80,14 +94,38 @@ public class  Connexion {
         }
     }
     
-    public ResultSet getCompteByCode(String code){
+    public ResultSet getCompteByCode(String code_client){
         try {
             PreparedStatement q = this.con.prepareStatement("SELECT * FROM compte WHERE (code_client=?)");
-            q.setString(1, code);
+            q.setString(1, code_client);
             ResultSet res = q.executeQuery();
             return res;
-        } catch (SQLException ex) {
-            Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+        }
+        return null;
+    }
+    
+    public ResultSet getCompteByNumCpt(String numCpt){
+        try {
+            PreparedStatement q = this.con.prepareStatement("SELECT * FROM compte WHERE (numCpt=?)");
+            q.setString(1, numCpt);
+            ResultSet res = q.executeQuery();
+            return res;
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+        }
+        return null;
+    }
+    
+    public ResultSet getClientByCode(String code_client){
+        try {
+            PreparedStatement q = this.con.prepareStatement("SELECT * FROM cllient WHERE (code=?)");
+            q.setString(1, code_client);
+            ResultSet res = q.executeQuery();
+            return res;
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
         }
         return null;
     }
@@ -102,8 +140,8 @@ public class  Connexion {
             }else{
                 return false;
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
             return false;
         }
         
@@ -116,8 +154,8 @@ public class  Connexion {
             q.setString(2, nip);
             ResultSet res = q.executeQuery();
             return res;
-        } catch (SQLException ex) {
-            Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
             return null;
         }
         
@@ -127,8 +165,8 @@ public class  Connexion {
         try {
             ResultSet res = this.stm.executeQuery("SELECT * FROM client WHERE estAdmin = 0 ORDER BY nom ASC");
             return res;
-        } catch (SQLException ex) {
-            Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
             return null;
         }
     }
@@ -137,8 +175,8 @@ public class  Connexion {
         try {
             ResultSet res = this.stm.executeQuery("SELECT * FROM compte ORDER BY id DESC");
             return res;
-        } catch (SQLException ex) {
-            Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
             return null;
         }
     }
@@ -152,8 +190,8 @@ public class  Connexion {
                 return 0;
             }
             
-        } catch (SQLException ex) {
-            Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
             return 0;
         }
     }
@@ -167,8 +205,8 @@ public class  Connexion {
                 return 0;
             }
             
-        } catch (SQLException ex) {
-            Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
             return 0;
         }
     }
@@ -182,8 +220,8 @@ public class  Connexion {
                 return 0;
             }
             
-        } catch (SQLException ex) {
-            Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
             return 0;
         }
     }

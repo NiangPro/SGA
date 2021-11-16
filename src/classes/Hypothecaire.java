@@ -17,4 +17,8 @@ public class Hypothecaire extends Compte
         super(solde, etat, code_client, type, dateOuverture);
     }
     
+    
+    public void depot(float montant){
+        this.solde += montant;
+    }
 }

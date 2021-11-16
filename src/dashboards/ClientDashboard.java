@@ -11,7 +11,6 @@ import java.awt.Color;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 /**
  *
@@ -26,6 +25,7 @@ public class ClientDashboard extends javax.swing.JFrame {
         initComponents();
          new Config(this);
         body.setSelectedIndex(0);
+        setSubHeader(sOpt);
         this.db = new Connexion();
     }
 
@@ -39,6 +39,12 @@ public class ClientDashboard extends javax.swing.JFrame {
         label.setOpaque(true);
         label.setBackground(new Color(0,102,204));
         body.setSelectedIndex(index);
+        setSubHeader(label);
+    }
+    
+    private void setSubHeader(JLabel label){
+        subHeaderTitle.setText(label.getText());
+        subHeaderTitle.setIcon(label.getIcon());
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -59,7 +65,7 @@ public class ClientDashboard extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         client_name = new javax.swing.JLabel();
         subHeader = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        subHeaderTitle = new javax.swing.JLabel();
         body = new javax.swing.JTabbedPane();
         bOpt = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
@@ -82,7 +88,7 @@ public class ClientDashboard extends javax.swing.JFrame {
         sOpt.setBackground(new java.awt.Color(0, 102, 204));
         sOpt.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         sOpt.setForeground(new java.awt.Color(255, 255, 255));
-        sOpt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/dashboard.png"))); // NOI18N
+        sOpt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/transaction.png"))); // NOI18N
         sOpt.setText("Opérations");
         sOpt.setOpaque(true);
         sOpt.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -137,11 +143,9 @@ public class ClientDashboard extends javax.swing.JFrame {
         subHeader.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         subHeader.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/dashboard.png"))); // NOI18N
-        jLabel2.setText("Accueil");
-        subHeader.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 0, 280, 40));
+        subHeaderTitle.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        subHeaderTitle.setForeground(new java.awt.Color(255, 255, 255));
+        subHeader.add(subHeaderTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 0, 280, 40));
 
         jPanel1.add(subHeader, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 50, 770, 40));
 
@@ -289,7 +293,6 @@ public class ClientDashboard extends javax.swing.JFrame {
     private javax.swing.JLabel client_name;
     private javax.swing.JPanel header;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel7;
@@ -300,5 +303,6 @@ public class ClientDashboard extends javax.swing.JFrame {
     private javax.swing.JLabel sProfile;
     private javax.swing.JPanel sidebar;
     private javax.swing.JPanel subHeader;
+    private javax.swing.JLabel subHeaderTitle;
     // End of variables declaration//GEN-END:variables
 }

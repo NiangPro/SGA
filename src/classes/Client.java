@@ -103,4 +103,8 @@ public void setCourriel(String courriel) {
         this.courriel = courriel;
     }
 
+    public void depot(float montant){
+        
+    }
+
 }

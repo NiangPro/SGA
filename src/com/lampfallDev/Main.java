@@ -174,7 +174,7 @@ public class Main extends javax.swing.JFrame {
                         }else{
                             this.user = new Client(res.getString("code"), res.getInt("nip"), res.getString("nom"), res.getString("prenom"), res.getString("tel"), res.getString("courriel"), res.getString("sexe"), res.getInt("estAdmin"));
                             
-                            new ClientDashboard().setVisible(true);
+                            new ClientDashboard(this.user).setVisible(true);
                         }
                         
                         this.dispose();                     

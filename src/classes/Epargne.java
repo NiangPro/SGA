@@ -10,7 +10,7 @@ import java.util.Date;
  *
  * @author Mariéme
  */
-public class Epargne extends Compte{
+public class Epargne extends Hypothecaire{
     
     public Epargne(Float solde, int etat, String code_client, String type, Date dateOuverture) {
         super(solde, etat, code_client, type, dateOuverture);

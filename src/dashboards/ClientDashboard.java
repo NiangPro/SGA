@@ -4,13 +4,22 @@
  */
 package dashboards;
 
+import classes.Client;
 import classes.Config;
 import com.lampfallDev.Main;
 import dataBase.Connexion;
+import forms.FormDepot;
 import java.awt.Color;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -18,15 +27,25 @@ import javax.swing.JLabel;
  */
 public class ClientDashboard extends javax.swing.JFrame {
     private Connexion db;
+    private Client client;
     /**
      * Creates new form ClientDashboard
      */
     public ClientDashboard() throws ClassNotFoundException {
         initComponents();
          new Config(this);
+         DateFormat df = new SimpleDateFormat("dd/MM/YYYY à H:mm");
+         loginDate.setText(df.format(new Date()));
         body.setSelectedIndex(0);
         setSubHeader(sOpt);
         this.db = new Connexion();
+        chargerTableOperation();
+    }
+    
+    public ClientDashboard(Client client) throws ClassNotFoundException{
+        this();
+        this.client = client;
+        client_name.setText(this.client.getCode());
     }
 
     
@@ -46,6 +65,19 @@ public class ClientDashboard extends javax.swing.JFrame {
         subHeaderTitle.setText(label.getText());
         subHeaderTitle.setIcon(label.getIcon());
     }
+    
+    private void chargerTableOperation(){
+        tabOperation.removeAll();
+        
+        DefaultTableModel dtm = new DefaultTableModel();
+        
+        String entete []={"N° Compte", "Type", "Montant", "Date"}; 
+        for (int i = 0; i < entete.length; i++) {
+            dtm.addColumn(entete[i]);
+        }
+        
+        tabOperation.setModel(dtm);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -64,11 +96,18 @@ public class ClientDashboard extends javax.swing.JFrame {
         header = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         client_name = new javax.swing.JLabel();
+        loginDate = new javax.swing.JLabel();
         subHeader = new javax.swing.JPanel();
         subHeaderTitle = new javax.swing.JLabel();
         body = new javax.swing.JTabbedPane();
         bOpt = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tabOperation = new javax.swing.JTable();
+        jLabel2 = new javax.swing.JLabel();
         bCompte = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         bProfile = new javax.swing.JPanel();
@@ -135,7 +174,12 @@ public class ClientDashboard extends javax.swing.JFrame {
         client_name.setFont(new java.awt.Font("Agency FB", 0, 24)); // NOI18N
         client_name.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/user_name.png"))); // NOI18N
         client_name.setText("client");
-        header.add(client_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 100, 50));
+        header.add(client_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 300, 50));
+
+        loginDate.setFont(new java.awt.Font("Tahoma", 3, 18)); // NOI18N
+        loginDate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        loginDate.setText("jLabel2");
+        header.add(loginDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(434, 10, 270, 30));
 
         jPanel1.add(header, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 0, 760, 50));
 
@@ -149,26 +193,99 @@ public class ClientDashboard extends javax.swing.JFrame {
 
         jPanel1.add(subHeader, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 50, 770, 40));
 
-        jLabel9.setText("FAIRE DES OPERATIONS");
+        bOpt.setBackground(new java.awt.Color(255, 255, 255));
+
+        jButton1.setBackground(new java.awt.Color(204, 102, 0));
+        jButton1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setText("Faire un Retrait");
+        jButton1.setBorder(null);
+
+        jButton2.setBackground(new java.awt.Color(0, 153, 153));
+        jButton2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
+        jButton2.setText("Faire un Dépôt");
+        jButton2.setBorder(null);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setBackground(new java.awt.Color(0, 153, 204));
+        jButton3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton3.setForeground(new java.awt.Color(255, 255, 255));
+        jButton3.setText("Paiement Facture");
+        jButton3.setBorder(null);
+
+        jButton4.setBackground(new java.awt.Color(102, 0, 102));
+        jButton4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton4.setForeground(new java.awt.Color(255, 255, 255));
+        jButton4.setText("Faire un Transfert");
+        jButton4.setBorder(null);
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        tabOperation.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tabOperation);
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel2.setText("Liste des dernières opérations");
 
         javax.swing.GroupLayout bOptLayout = new javax.swing.GroupLayout(bOpt);
         bOpt.setLayout(bOptLayout);
         bOptLayout.setHorizontalGroup(
             bOptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bOptLayout.createSequentialGroup()
-                .addGap(236, 236, 236)
-                .addComponent(jLabel9)
-                .addContainerGap(409, Short.MAX_VALUE))
+                .addGap(23, 23, 23)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 701, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(41, Short.MAX_VALUE))
+            .addGroup(bOptLayout.createSequentialGroup()
+                .addGap(69, 69, 69)
+                .addGroup(bOptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(bOptLayout.createSequentialGroup()
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(54, 54, 54)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(46, 46, 46)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(94, 94, 94))
         );
         bOptLayout.setVerticalGroup(
             bOptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bOptLayout.createSequentialGroup()
-                .addGap(162, 162, 162)
-                .addComponent(jLabel9)
-                .addContainerGap(256, Short.MAX_VALUE))
+                .addGap(57, 57, 57)
+                .addGroup(bOptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(44, 44, 44)
+                .addComponent(jLabel2)
+                .addGap(26, 26, 26)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         body.addTab("tab1", bOpt);
+
+        bCompte.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel7.setText("MES COMPTES");
 
@@ -191,6 +308,7 @@ public class ClientDashboard extends javax.swing.JFrame {
 
         body.addTab("tab2", bCompte);
 
+        bProfile.setBackground(new java.awt.Color(255, 255, 255));
         bProfile.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel4.setText("MON PROFIL");
@@ -246,6 +364,18 @@ public class ClientDashboard extends javax.swing.JFrame {
         removeActive(sOpt);
     }//GEN-LAST:event_sProfileMouseClicked
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        JFrame form = new FormDepot(client);
+        form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        form.setResizable(false);
+        form.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -292,17 +422,24 @@ public class ClientDashboard extends javax.swing.JFrame {
     private javax.swing.JTabbedPane body;
     private javax.swing.JLabel client_name;
     private javax.swing.JPanel header;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel loginDate;
     private javax.swing.JLabel sCompte;
     private javax.swing.JLabel sOpt;
     private javax.swing.JLabel sProfile;
     private javax.swing.JPanel sidebar;
     private javax.swing.JPanel subHeader;
     private javax.swing.JLabel subHeaderTitle;
+    private javax.swing.JTable tabOperation;
     // End of variables declaration//GEN-END:variables
 }

@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.util.logging.Level;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -36,6 +37,8 @@ public class AdminDashboard extends javax.swing.JFrame {
     public AdminDashboard() throws ClassNotFoundException {
         initComponents();
         new Config(this);
+         DateFormat df = new SimpleDateFormat("dd/MM/YYYY à H:mm");
+         loginDate.setText(df.format(new Date()));
         this.db = new Connexion();
         chargerTableauClient();
         chargerTableauCompte();
@@ -68,7 +71,7 @@ public class AdminDashboard extends javax.swing.JFrame {
         tabCompte.removeAll();
         ResultSet rs = null;
         DefaultTableModel dtm = new DefaultTableModel();
-        String colonnes[] = {"Code Client", "Type", "Solde", "Etat", "Date Ouverture"};
+        String colonnes[] = {"N°Compte","Code Client", "Type", "Solde", "Etat", "Date Ouverture"};
         
         for (int i = 0; i<colonnes.length;i++) {
             dtm.addColumn(colonnes[i]);
@@ -80,15 +83,18 @@ public class AdminDashboard extends javax.swing.JFrame {
             while(rs.next()){
                 Float solde = rs.getFloat(2);
                 int etat = rs.getInt(3);
-                String type = rs.getString(5);
-                String code_client = rs.getString(6);
-                Date dateOuverture = rs.getDate(7);
+                String type = rs.getString(4);
+                String code_client = rs.getString(5);
+                String numCpte = rs.getString(7);
+
+                
+                Date dateOuverture = rs.getDate(6);
                 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String newDate = sdf.format(dateOuverture);
                 String newEtat = etat == 0 ? " Désactivé" : "Activé";
                 
-                String entree [] = {code_client, type, solde+" $", newEtat, newDate};
+                String entree [] = {numCpte,code_client, type, solde+" $", newEtat, newDate};
                 dtm.addRow(entree);
             }
         } catch (SQLException ex) {
@@ -149,6 +155,7 @@ public class AdminDashboard extends javax.swing.JFrame {
         header = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         user_name = new javax.swing.JLabel();
+        loginDate = new javax.swing.JLabel();
         subHeader = new javax.swing.JPanel();
         subHeaderTitle = new javax.swing.JLabel();
         body = new javax.swing.JTabbedPane();
@@ -262,6 +269,10 @@ public class AdminDashboard extends javax.swing.JFrame {
         user_name.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         user_name.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/user_name.png"))); // NOI18N
 
+        loginDate.setFont(new java.awt.Font("Tahoma", 2, 18)); // NOI18N
+        loginDate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        loginDate.setText("jLabel9");
+
         javax.swing.GroupLayout headerLayout = new javax.swing.GroupLayout(header);
         header.setLayout(headerLayout);
         headerLayout.setHorizontalGroup(
@@ -269,7 +280,9 @@ public class AdminDashboard extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, headerLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(user_name, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 409, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
+                .addComponent(loginDate, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(69, 69, 69)
                 .addComponent(jLabel2)
                 .addContainerGap())
         );
@@ -282,6 +295,10 @@ public class AdminDashboard extends javax.swing.JFrame {
                         .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(user_name, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
+            .addGroup(headerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(loginDate, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.add(header, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 750, 50));
@@ -856,6 +873,7 @@ public class AdminDashboard extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel loginDate;
     private javax.swing.JLabel nbreClients;
     private javax.swing.JLabel nbreComptes;
     private javax.swing.JLabel sClients;

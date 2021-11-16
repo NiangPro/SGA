@@ -13,8 +13,8 @@ import java.util.Date;
 public class Hypothecaire extends Compte
 {
     
-    public Hypothecaire(Float solde, String etat, Client client, Date dateOuverture) {
-        super(solde, etat, client, dateOuverture);
+    public Hypothecaire(Float solde, int etat, String code_client,String type, Date dateOuverture) {
+        super(solde, etat, code_client, type, dateOuverture);
     }
     
 }

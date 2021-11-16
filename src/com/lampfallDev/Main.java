@@ -6,9 +6,10 @@ package com.lampfallDev;
 
 import classes.Admin;
 import classes.Client;
+import classes.Config;
 import dataBase.Connexion;
-import forms.AdminDashboard;
-import forms.ClientDashboard;
+import dashboards.AdminDashboard;
+import dashboards.ClientDashboard;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -20,7 +21,7 @@ import javax.swing.JOptionPane;
  * @author HP
  */
 public class Main extends javax.swing.JFrame {
-    private final Connexion Db;
+    public final Connexion Db;
     private Client user;
     /**
      * Creates new form Login
@@ -28,7 +29,7 @@ public class Main extends javax.swing.JFrame {
      */
     public Main() throws ClassNotFoundException {
         initComponents();
-        this.setResizable(false);
+        new Config(this);
         this.Db = new Connexion();
     }
 
@@ -62,8 +63,8 @@ public class Main extends javax.swing.JFrame {
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 104, 209, 285));
 
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setIcon(new javax.swing.ImageIcon("C:\\Users\\HP\\Downloads\\logo-removebg-preview.png")); // NOI18N
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 340, -1));
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/lg.png"))); // NOI18N
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 20, 230, 70));
 
         jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
         jLabel3.setText("CONNEXION");
@@ -83,9 +84,11 @@ public class Main extends javax.swing.JFrame {
         user_nip.setToolTipText("");
 
         jLabel4.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/user.png"))); // NOI18N
         jLabel4.setText("Code :");
 
         jLabel5.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/password.png"))); // NOI18N
         jLabel5.setText("NIP :");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -167,23 +170,22 @@ public class Main extends javax.swing.JFrame {
                         if(res.getInt("estAdmin")== 1){
                             
                             this.user = new Admin(res.getString("code"), res.getInt("nip"), res.getString("nom"), res.getString("prenom"), res.getString("tel"), res.getString("courriel"), res.getString("sexe"), res.getInt("estAdmin"));
-                            JOptionPane.showMessageDialog(null, "Bienvenu Mr Administrateur \n Code:"+user.getCode());
                             new AdminDashboard().setVisible(true);
                         }else{
                             this.user = new Client(res.getString("code"), res.getInt("nip"), res.getString("nom"), res.getString("prenom"), res.getString("tel"), res.getString("courriel"), res.getString("sexe"), res.getInt("estAdmin"));
-                            JOptionPane.showMessageDialog(null, "Bienvenu Mr Administrateur \n Code:"+user.getCode());
-
+                            
                             new ClientDashboard().setVisible(true);
                         }
                         
-                        this.setVisible(false);
-//                        new Main().setVisible(true);                        
+                        this.dispose();                     
                     }else{
                         JOptionPane.showMessageDialog(null, "Code ou Nip incorrect");  
                     }
                 } catch (SQLException ex) {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
             }
             
 // TODO add your handling code here:

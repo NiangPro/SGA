@@ -4,7 +4,13 @@
  */
 package classes;
 
+import dataBase.Connexion;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 
 /**
  *
@@ -13,7 +19,35 @@ import java.util.Date;
 public class Operation {
     private Float montant;
     private TypeOp type;
-    private Date dateOp;
+    private Date dateOp;    
+    private String numCpt;
+    private Connexion db;
+    private Compte compte;
+
+    public Connexion getDb() {
+        return db;
+    }
+
+    public void setDb(Connexion db) {
+        this.db = db;
+    }
+
+    public Compte getCompte() {
+        return compte;
+    }
+
+    public void setCompte(Compte compte) {
+        this.compte = compte;
+    }
+
+    public String getNumCpt() {
+        return numCpt;
+    }
+
+    public void setNumCpt(String numCpt) {
+        this.numCpt = numCpt;
+    }
+
 
     public Float getMontant() {
         return montant;
@@ -39,10 +73,27 @@ public class Operation {
         this.dateOp = dateOp;
     }
 
-    public Operation(Float montant, TypeOp type, Date dateOp) {
+    public Operation(String numCpt, Float montant, TypeOp type, Date dateOp) {
         this.montant = montant;
         this.type = type;
         this.dateOp = dateOp;
+        this.numCpt = numCpt;
+        
+        try {
+            this.db = new Connexion();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Operation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        ResultSet rs = this.db.getCompteByNumCpt(this.numCpt);
+        
+        try {
+            if(rs.next()){
+                this.compte = new Compte(rs.getFloat("solde"), rs.getInt("etat"), rs.getString("code_client"), rs.getString("type"), rs.getDate("dateOuverture"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Operation.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
             
     public static enum TypeOp{

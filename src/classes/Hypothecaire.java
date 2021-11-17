@@ -5,6 +5,7 @@
 package classes;
 
 import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -19,6 +20,11 @@ public class Hypothecaire extends Compte
     
     
     public void depot(float montant){
-        this.solde += montant;
+        if(this.db.depot(this.numCompte, montant)){
+            this.db.addOperation(new Operation(this.getNumCompte(), montant, "Depot", new Date(), 0));
+            JOptionPane.showMessageDialog(null, "Dépôt avec succès");
+        }else{
+            JOptionPane.showMessageDialog(null, "Erreur de Dépôt");
+        }
     }
 }

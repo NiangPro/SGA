@@ -24,6 +24,8 @@ public class Compte {
     protected String numCompte;    
     protected Client client;
 
+
+    
     public Client getClient() {
         return client;
     }

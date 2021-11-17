@@ -81,14 +81,14 @@ public class AdminDashboard extends javax.swing.JFrame {
         
         try {
             while(rs.next()){
-                Float solde = rs.getFloat(2);
-                int etat = rs.getInt(3);
-                String type = rs.getString(4);
-                String code_client = rs.getString(5);
-                String numCpte = rs.getString(7);
+                Float solde = rs.getFloat(1);
+                int etat = rs.getInt(2);
+                String type = rs.getString(3);
+                String code_client = rs.getString(4);
+                String numCpte = rs.getString(6);
 
                 
-                Date dateOuverture = rs.getDate(6);
+                Date dateOuverture = rs.getDate(5);
                 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String newDate = sdf.format(dateOuverture);

@@ -5,7 +5,16 @@
 package forms;
 
 import classes.Client;
+import classes.Compte;
 import classes.Config;
+import classes.Hypothecaire;
+import dataBase.Connexion;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 
 /**
  *
@@ -13,17 +22,32 @@ import classes.Config;
  */
 public class FormDepot extends javax.swing.JFrame {
     private Client client;
+    private Connexion db;
     /**
      * Creates new form FormBlockAccess
+     * @param client
      */
-    public FormDepot(Client client) {
+    public FormDepot(Client client) throws ClassNotFoundException {
         initComponents();
         this.client = client;
         new Config(this);
+        this.db = new Connexion();
+        getComptes();
     }
 
     private FormDepot() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    private void getComptes(){
+        ResultSet rs = db.getCompteByCode(client.getCode());
+        try {
+            while(rs.next()){
+                numCpt.addItem(rs.getString("numCpt"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(FormDepot.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -36,24 +60,37 @@ public class FormDepot extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
+        montant = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        numCpt = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 20, 220, 30));
+        jPanel1.add(montant, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 100, 220, 30));
 
         jLabel1.setFont(new java.awt.Font("Agency FB", 0, 18)); // NOI18N
-        jLabel1.setText("Montant :");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 14, 80, 40));
+        jLabel1.setText("N° Compte:");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 60, 30));
 
         jButton1.setBackground(new java.awt.Color(0, 153, 153));
         jButton1.setFont(new java.awt.Font("Agency FB", 0, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Valider");
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(253, 63, 70, 30));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 150, 70, 30));
+
+        jLabel2.setFont(new java.awt.Font("Agency FB", 0, 18)); // NOI18N
+        jLabel2.setText("Montant :");
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 60, 30));
+
+        jPanel1.add(numCpt, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, 220, 30));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -61,20 +98,61 @@ public class FormDepot extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        
+        var depot_numCpt = numCpt.getSelectedItem();
+        var mt = montant.getText();
+        
+        String regex = "^[0-9]+$";
+        
+        if(depot_numCpt== null){
+            
+            JOptionPane.showMessageDialog(null, "Vous n'avait pas de compte pour le moment");
+        }else{
+            if(mt.isEmpty()){
+                JOptionPane.showMessageDialog(null, "Veuillez donner un montant");
+            }else{
+                if(mt.matches(regex)){
+                    ResultSet rs = db.getCompteByNumCpt(depot_numCpt.toString());
+                    try {
+                        if(rs.next()){
+                            if(rs.getString("type").equals("Marge Credit")){
+                                JOptionPane.showMessageDialog(null, "Impossible de faire un dépôt avec la marge de crédit");
+                            }else{
+                                Hypothecaire cpt = new Hypothecaire(rs.getFloat("solde"), rs.getInt("etat"),rs.getString("code_client"),rs.getString("type"), rs.getDate("dateOuverture"));
+                                cpt.setNumCompte(rs.getString("numCpt"));
+                                cpt.depot(Float.parseFloat(mt));
+                                this.dispose();
+                            }
+                        }else{
+                            JOptionPane.showMessageDialog(null, "Erreur de dépôt");
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(FormDepot.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null, "Veuillez entrer un montant positif");
+                }
+            }
+        }
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -115,7 +193,9 @@ public class FormDepot extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField montant;
+    private javax.swing.JComboBox<String> numCpt;
     // End of variables declaration//GEN-END:variables
 }

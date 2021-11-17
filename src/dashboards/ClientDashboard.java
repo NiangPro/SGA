@@ -9,12 +9,13 @@ import classes.Config;
 import com.lampfallDev.Main;
 import dataBase.Connexion;
 import forms.FormDepot;
+import forms.FormRetrait;
 import java.awt.Color;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -70,11 +71,24 @@ public class ClientDashboard extends javax.swing.JFrame {
         tabOperation.removeAll();
         
         DefaultTableModel dtm = new DefaultTableModel();
+         DateFormat df = new  SimpleDateFormat("dd/MM/YYYY");
         
-        String entete []={"N° Compte", "Type", "Montant", "Date"}; 
+        String entete []={"N°Opération","N° Compte", "Type", "Montant", "Date"}; 
         for (int i = 0; i < entete.length; i++) {
             dtm.addColumn(entete[i]);
         }
+        
+        ResultSet rs = db.operations();
+        
+        try {
+            while(rs.next()){
+                String entrees [] = {rs.getString("numOpt"), rs.getString("numCpt"), rs.getString("typeOpt"), rs.getFloat("montant")+" $", df.format(rs.getDate("date"))};
+                dtm.addRow(entrees);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClientDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         
         tabOperation.setModel(dtm);
     }
@@ -108,6 +122,7 @@ public class ClientDashboard extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tabOperation = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
+        jButton5 = new javax.swing.JButton();
         bCompte = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         bProfile = new javax.swing.JPanel();
@@ -200,6 +215,11 @@ public class ClientDashboard extends javax.swing.JFrame {
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Faire un Retrait");
         jButton1.setBorder(null);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setBackground(new java.awt.Color(0, 153, 153));
         jButton2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -245,6 +265,19 @@ public class ClientDashboard extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setText("Liste des dernières opérations");
 
+        jButton5.setBackground(new java.awt.Color(51, 0, 102));
+        jButton5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton5.setForeground(new java.awt.Color(255, 255, 255));
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh.png"))); // NOI18N
+        jButton5.setText("Actualiser");
+        jButton5.setActionCommand("Actualiser");
+        jButton5.setBorder(null);
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout bOptLayout = new javax.swing.GroupLayout(bOpt);
         bOpt.setLayout(bOptLayout);
         bOptLayout.setHorizontalGroup(
@@ -255,16 +288,20 @@ public class ClientDashboard extends javax.swing.JFrame {
                 .addContainerGap(41, Short.MAX_VALUE))
             .addGroup(bOptLayout.createSequentialGroup()
                 .addGap(69, 69, 69)
-                .addGroup(bOptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(bOptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(bOptLayout.createSequentialGroup()
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(54, 54, 54)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(46, 46, 46)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(bOptLayout.createSequentialGroup()
+                        .addGap(36, 36, 36)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(bOptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(94, 94, 94))
         );
         bOptLayout.setVerticalGroup(
@@ -276,10 +313,12 @@ public class ClientDashboard extends javax.swing.JFrame {
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(44, 44, 44)
-                .addComponent(jLabel2)
-                .addGap(26, 26, 26)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                .addGap(36, 36, 36)
+                .addGroup(bOptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jButton5))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -368,12 +407,37 @@ public class ClientDashboard extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        JFrame form;
+        try {
+            form = new FormRetrait(client);
+            form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            form.setResizable(false);
+            form.setVisible(true);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ClientDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        chargerTableOperation();
+    }//GEN-LAST:event_jButton5ActionPerformed
+
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        JFrame form = new FormDepot(client);
-        form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        form.setResizable(false);
-        form.setVisible(true);
+        JFrame form;
+        try {
+            form = new FormDepot(client);
+            form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            form.setResizable(false);
+            form.setVisible(true);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ClientDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
@@ -426,6 +490,7 @@ public class ClientDashboard extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

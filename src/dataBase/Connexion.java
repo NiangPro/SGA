@@ -10,6 +10,7 @@ package dataBase;
  */
 import classes.Client;
 import classes.Compte;
+import classes.Operation;
 import java.sql.*;
 import javax.swing.JOptionPane;
 /**
@@ -41,13 +42,16 @@ public class  Connexion {
     
     public Boolean depot(String numCpt, float montant){
         try {
-            PreparedStatement q = con.prepareStatement("UPDATE compte set solde = solde  + ? WHERE (numCpt = ?)");
-            
+            PreparedStatement q = con.prepareStatement("UPDATE `compte` SET `solde`=(`solde`+?) WHERE `numCpt`=?");
             q.setFloat(1, montant);
             q.setString(2, numCpt);
-
-            q.execute();
+            
+            System.out.println(q.executeUpdate());
+            if(q.executeUpdate() == 0){
+                return false;
+            }else{
                 return true;
+            }
             
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
@@ -66,6 +70,25 @@ public class  Connexion {
             q.setString(6, client.getSexe());
             q.setInt(7, client.getNip());
             q.setInt(8, client.getEstAdmin());
+
+            q.execute();
+                return true;
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+            return false;
+        }
+    }
+    
+    public Boolean addOperation(Operation opt){
+        try {
+            PreparedStatement q = con.prepareStatement("INSERT INTO operation VALUES(?,?,NOW(),?,?,?)");
+            q.setFloat(1, opt.getMontant());
+            q.setString(2, opt.getTypeOpt());
+            q.setString(3, opt.getNumCpt());
+            q.setInt(4, opt.getNbreBillet());
+            q.setString(5, opt.getNumOpt());
+
 
             q.execute();
                 return true;
@@ -118,9 +141,23 @@ public class  Connexion {
         return null;
     }
     
+    public ResultSet getCompteByType(String type, String code_client){
+        try {
+            PreparedStatement q = this.con.prepareStatement("SELECT * FROM compte WHERE (type=? AND code_client=?)");
+            q.setString(1, type);
+            q.setString(2, code_client);
+
+            ResultSet res = q.executeQuery();
+            return res;
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+        }
+        return null;
+    }
+    
     public ResultSet getClientByCode(String code_client){
         try {
-            PreparedStatement q = this.con.prepareStatement("SELECT * FROM cllient WHERE (code=?)");
+            PreparedStatement q = this.con.prepareStatement("SELECT * FROM client WHERE (code=?)");
             q.setString(1, code_client);
             ResultSet res = q.executeQuery();
             return res;
@@ -171,9 +208,20 @@ public class  Connexion {
         }
     }
     
+    public ResultSet operations(){
+        try {
+            ResultSet res = this.stm.executeQuery("SELECT * FROM operation ORDER BY numOpt DESC LIMIT 10");
+            
+            return res;
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+            return null;
+        }
+    }
+    
     public ResultSet comptes(){
         try {
-            ResultSet res = this.stm.executeQuery("SELECT * FROM compte ORDER BY id DESC");
+            ResultSet res = this.stm.executeQuery("SELECT * FROM compte ORDER BY numCpt DESC");
             return res;
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
@@ -199,6 +247,21 @@ public class  Connexion {
     public int nbreComptes(){
         try {
             ResultSet res = this.stm.executeQuery("SELECT COUNT(*) as nbre FROM compte");
+            if(res.next()){
+                return res.getInt("nbre");
+            }else{
+                return 0;
+            }
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+            return 0;
+        }
+    }
+    
+    public int nbreOperations(){
+        try {
+            ResultSet res = this.stm.executeQuery("SELECT COUNT(*) as nbre FROM operation");
             if(res.next()){
                 return res.getInt("nbre");
             }else{

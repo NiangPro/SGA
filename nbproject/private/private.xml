@@ -4,12 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/HP/3D%20Objects/JAVA/GuichetAutomatique/src/dashboards/AdminDashboard.java</file>
-            <file>file:/C:/Users/HP/3D%20Objects/JAVA/GuichetAutomatique/src/classes/Client.java</file>
             <file>file:/C:/Users/HP/3D%20Objects/JAVA/GuichetAutomatique/src/forms/FormDepot.java</file>
             <file>file:/C:/Users/HP/3D%20Objects/JAVA/GuichetAutomatique/src/dashboards/ClientDashboard.java</file>
-            <file>file:/C:/Users/HP/3D%20Objects/JAVA/GuichetAutomatique/src/forms/AddCompte.java</file>
             <file>file:/C:/Users/HP/3D%20Objects/JAVA/GuichetAutomatique/src/dataBase/Connexion.java</file>
-            <file>file:/C:/Users/HP/3D%20Objects/JAVA/GuichetAutomatique/src/com/lampfallDev/Main.java</file>
+            <file>file:/C:/Users/HP/3D%20Objects/JAVA/GuichetAutomatique/src/classes/Compte.java</file>
         </group>
     </open-files>
 </project-private>

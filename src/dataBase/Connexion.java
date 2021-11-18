@@ -10,6 +10,7 @@ package dataBase;
  */
 import classes.Client;
 import classes.Compte;
+import classes.Historique;
 import classes.Operation;
 import java.sql.*;
 import javax.swing.JOptionPane;
@@ -40,6 +41,41 @@ public class  Connexion {
         }
     }
     
+    public Boolean bloquerAcces(String code){
+        try {
+            PreparedStatement q = con.prepareStatement("UPDATE `client` SET `acces`=0 WHERE `code`=?");
+            q.setString(1, code);
+            
+            System.out.println(q.executeUpdate());
+            if(q.executeUpdate() == 0){
+                return false;
+            }else{
+                return true;
+            }
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+            return false;
+        }
+    }
+    public Boolean debloquerAcces(String code){
+        try {
+            PreparedStatement q = con.prepareStatement("UPDATE `client` SET `acces`=1 WHERE `code`=?");
+            q.setString(1, code);
+            
+            System.out.println(q.executeUpdate());
+            if(q.executeUpdate() == 0){
+                return false;
+            }else{
+                return true;
+            }
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+            return false;
+        }
+    }
+    
     public Boolean depot(String numCpt, float montant){
         try {
             PreparedStatement q = con.prepareStatement("UPDATE `compte` SET `solde`=(`solde`+?) WHERE `numCpt`=?");
@@ -58,6 +94,27 @@ public class  Connexion {
             return false;
         }
     }
+    
+    public Boolean ajoutArgent(float montant, int nbreBillet){
+        try {
+            PreparedStatement q = con.prepareStatement("UPDATE `guichet` SET `balance`=(`balance`+?),`nbreBillet`=(`nbreBillet`+?)  WHERE `id`=1");
+            q.setFloat(1, montant);
+            q.setInt(2, nbreBillet);
+
+            
+            System.out.println(q.executeUpdate());
+            if(q.executeUpdate() == 0){
+                return false;
+            }else{
+                return true;
+            }
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+            return false;
+        }
+    }
+
     
     public Boolean addClient(Client client){
         try {
@@ -80,6 +137,21 @@ public class  Connexion {
         }
     }
     
+    public Boolean addHistorique(Historique h){
+        try {
+            PreparedStatement q = con.prepareStatement("INSERT INTO historique VALUES(null,NOW(),?)");
+            q.setString(1, h.getNumOpt());
+
+
+            q.execute();
+                return true;
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+            return false;
+        }
+    }
+
     public Boolean addOperation(Operation opt){
         try {
             PreparedStatement q = con.prepareStatement("INSERT INTO operation VALUES(?,?,NOW(),?,?,?)");
@@ -121,6 +193,18 @@ public class  Connexion {
         try {
             PreparedStatement q = this.con.prepareStatement("SELECT * FROM compte WHERE (code_client=?)");
             q.setString(1, code_client);
+            ResultSet res = q.executeQuery();
+            return res;
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+        }
+        return null;
+    }
+    
+    public ResultSet getOperationByNumOpt(String numOpt){
+        try {
+            PreparedStatement q = this.con.prepareStatement("SELECT * FROM operation WHERE (numOpt=?)");
+            q.setString(1, numOpt);
             ResultSet res = q.executeQuery();
             return res;
         } catch (SQLException e) {
@@ -208,10 +292,31 @@ public class  Connexion {
         }
     }
     
+    public ResultSet historiques(){
+        try {
+            ResultSet res = this.stm.executeQuery("SELECT * FROM historique ORDER BY id DESC LIMIT 15");
+            
+            return res;
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+            return null;
+        }
+    }
+    
     public ResultSet operations(){
         try {
-            ResultSet res = this.stm.executeQuery("SELECT * FROM operation ORDER BY numOpt DESC LIMIT 10");
+            ResultSet res = this.stm.executeQuery("SELECT * FROM operation ORDER BY numOpt DESC LIMIT 15");
             
+            return res;
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
+            return null;
+        }
+    }
+    
+    public ResultSet guichet(){
+        try {
+            ResultSet res = this.stm.executeQuery("SELECT * FROM guichet WHERE id= 1");
             return res;
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "SQLException: " + e.getMessage()+"\n SQLState: " + e.getSQLState()+"\n VendorError: " + e.getErrorCode());
@@ -228,6 +333,7 @@ public class  Connexion {
             return null;
         }
     }
+    
     
     public int nbreClients(){
         try {

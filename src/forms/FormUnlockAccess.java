@@ -16,18 +16,18 @@ import javax.swing.JOptionPane;
  *
  * @author HP
  */
-public class FormBlockAccess extends javax.swing.JFrame {
+public class FormUnlockAccess extends javax.swing.JFrame {
 
     private Connexion db;
     /**
      * Creates new form FormBlockAccess
      */
-    public FormBlockAccess() {
+    public FormUnlockAccess() {
         initComponents();
         try {
             db = new Connexion();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(FormBlockAccess.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FormUnlockAccess.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -54,17 +54,17 @@ public class FormBlockAccess extends javax.swing.JFrame {
         jLabel1.setText("Code Client :");
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 14, 80, 40));
 
-        jButton1.setBackground(new java.awt.Color(204, 0, 0));
+        jButton1.setBackground(new java.awt.Color(0, 102, 51));
         jButton1.setFont(new java.awt.Font("Agency FB", 0, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/lock.png"))); // NOI18N
-        jButton1.setText("Bloquer");
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/unlock.png"))); // NOI18N
+        jButton1.setText("Débloquer");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(223, 63, 100, 30));
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(203, 63, 120, 30));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -94,8 +94,8 @@ public class FormBlockAccess extends javax.swing.JFrame {
         
         try {
             if(rs.next()){
-                if(db.bloquerAcces(rs.getString("code"))){
-                    JOptionPane.showMessageDialog(null, "L'accès bloqué avec succès");
+                if(db.debloquerAcces(rs.getString("code"))){
+                    JOptionPane.showMessageDialog(null, "L'accès débloqué avec succès");
                     this.dispose();
                 }else{
                     JOptionPane.showMessageDialog(null, "Une erreur est survenue");
@@ -104,7 +104,7 @@ public class FormBlockAccess extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Code inexistant");
             }
         } catch (SQLException ex) {
-            Logger.getLogger(FormBlockAccess.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FormUnlockAccess.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -125,20 +125,21 @@ public class FormBlockAccess extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FormBlockAccess.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormUnlockAccess.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FormBlockAccess.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormUnlockAccess.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FormBlockAccess.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormUnlockAccess.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FormBlockAccess.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormUnlockAccess.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FormBlockAccess().setVisible(true);
+                new FormUnlockAccess().setVisible(true);
             }
         });
     }

@@ -5,11 +5,14 @@
 package dashboards;
 
 import classes.Config;
+import classes.Historique;
 import com.lampfallDev.Main;
 import dataBase.Connexion;
 import forms.AddClient;
 import forms.AddCompte;
+import forms.AddMoney;
 import forms.FormBlockAccess;
+import forms.FormUnlockAccess;
 import java.awt.Color;
 import java.util.logging.Level;
 import java.sql.ResultSet;
@@ -42,12 +45,17 @@ public class AdminDashboard extends javax.swing.JFrame {
         this.db = new Connexion();
         chargerTableauClient();
         chargerTableauCompte();
+        chargerTableTransaction();
+        chargerTableHistorique();
+        guichet();
         
         int nclient = this.db.nbreClients();        
         int ncpt = this.db.nbreComptes();
+        int nopt = this.db.nbreOperations();
 
         nbreClients.setText(""+nclient+"");
         nbreComptes.setText(""+ncpt+"");
+        nbreOperations.setText(nopt+"");
 
         
         subHeaderTitle.setText(sDashboard.getText());
@@ -67,6 +75,18 @@ public class AdminDashboard extends javax.swing.JFrame {
         label.setBackground(new Color(240,240,240));
     }
     
+    private void guichet(){
+        ResultSet rs = db.guichet();
+        try {
+            if(rs.next()){
+                balance.setText(rs.getFloat("balance")+" $");
+                nbreBillet.setText(rs.getInt("nbreBillet")+"");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AdminDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     private void chargerTableauCompte(){
         tabCompte.removeAll();
         ResultSet rs = null;
@@ -81,14 +101,14 @@ public class AdminDashboard extends javax.swing.JFrame {
         
         try {
             while(rs.next()){
-                Float solde = rs.getFloat(2);
-                int etat = rs.getInt(3);
-                String type = rs.getString(4);
-                String code_client = rs.getString(5);
-                String numCpte = rs.getString(7);
+                Float solde = rs.getFloat(1);
+                int etat = rs.getInt(2);
+                String type = rs.getString(3);
+                String code_client = rs.getString(4);
+                String numCpte = rs.getString(6);
 
                 
-                Date dateOuverture = rs.getDate(6);
+                Date dateOuverture = rs.getDate(5);
                 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String newDate = sdf.format(dateOuverture);
@@ -108,10 +128,10 @@ public class AdminDashboard extends javax.swing.JFrame {
         tabClient.removeAll();
         ResultSet rs = null;
         DefaultTableModel dtm = new DefaultTableModel();
-        String colonnes[] = {"code", "Prénom", "Nom", "Téléphone", "Courriel", "Sexe"};
+        String colonnes[] = {"code", "Prénom", "Nom", "Téléphone", "Courriel", "Sexe", "Etat"};
         
-        for (int i = 0; i<colonnes.length;i++) {
-            dtm.addColumn(colonnes[i]);
+        for (String colonne : colonnes) {
+            dtm.addColumn(colonne);
         }
         
         rs = db.clients();
@@ -124,8 +144,10 @@ public class AdminDashboard extends javax.swing.JFrame {
                 String tel = rs.getString(4);
                 String courriel = rs.getString(5);
                 String sexe = rs.getString(6);
+                String etat = rs.getInt(9)== 0 ? "Désactivé" : "Activé" ;
+
                 
-                String entree [] = {code, prenom, nom, tel, courriel, sexe};
+                String entree [] = {code, prenom, nom, tel, courriel, sexe,etat };
                 dtm.addRow(entree);
             }
         } catch (SQLException ex) {
@@ -133,6 +155,59 @@ public class AdminDashboard extends javax.swing.JFrame {
         }
         
         tabClient.setModel(dtm);
+    }
+    
+    private void chargerTableTransaction(){
+        tabTransaction.removeAll();
+        
+        DefaultTableModel dtm = new DefaultTableModel();
+         DateFormat df = new  SimpleDateFormat("dd/MM/YYYY");
+        
+        String entete []={"N°Opération","N° Compte", "Type", "Montant", "Date"}; 
+        for (String entete1 : entete) {
+            dtm.addColumn(entete1);
+        }
+        
+        ResultSet rs = db.operations();
+        
+        try {
+            while(rs.next()){
+                String entrees [] = {rs.getString("numOpt"), rs.getString("numCpt"), rs.getString("typeOpt"), rs.getFloat("montant")+" $", df.format(rs.getDate("date"))};
+                dtm.addRow(entrees);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClientDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        tabTransaction.setModel(dtm);
+    }
+    
+    private void chargerTableHistorique(){
+        tabHistoriques.removeAll();
+        
+        DefaultTableModel dtm = new DefaultTableModel();
+         DateFormat df = new  SimpleDateFormat("dd/MM/YYYY");
+        
+        String entete []={"N°Opération","N° Compte", "Type", "Montant","Prénom","Nom", "Date"}; 
+        for (String entete1 : entete) {
+            dtm.addColumn(entete1);
+        }
+        
+        ResultSet rs = db.historiques();
+        
+        try {
+            while(rs.next()){
+                Historique h = new Historique(rs.getDate("date"), rs.getString("numOpt"));
+                String entrees [] = {h.getOperation().getNumOpt(), h.getOperation().getCompte().getNumCompte(), h.getOperation().getTypeOpt(), h.getOperation().getMontant()+" $", h.getOperation().getCompte().getClient().getPrenom(), h.getOperation().getCompte().getClient().getNom(), df.format(h.getOperation().getDate())};
+                dtm.addRow(entrees);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClientDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        tabHistoriques.setModel(dtm);
     }
 
     /**
@@ -168,7 +243,15 @@ public class AdminDashboard extends javax.swing.JFrame {
         nbreComptes = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
+        nbreOperations = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        nbreBillet = new javax.swing.JLabel();
+        balance = new javax.swing.JLabel();
+        jButton8 = new javax.swing.JButton();
+        jButton9 = new javax.swing.JButton();
         bclient = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -185,8 +268,13 @@ public class AdminDashboard extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jButton6 = new javax.swing.JButton();
         bTransaction = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tabTransaction = new javax.swing.JTable();
         jLabel11 = new javax.swing.JLabel();
         history = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tabHistoriques = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -202,7 +290,7 @@ public class AdminDashboard extends javax.swing.JFrame {
 
         sHistory.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         sHistory.setForeground(new java.awt.Color(255, 255, 255));
-        sHistory.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/history.png"))); // NOI18N
+        sHistory.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/histo.png"))); // NOI18N
         sHistory.setText("Historiques");
         sHistory.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -388,10 +476,10 @@ public class AdminDashboard extends javax.swing.JFrame {
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/transaction.png"))); // NOI18N
         jLabel7.setText("Transactions");
 
-        jLabel8.setFont(new java.awt.Font("Times New Roman", 1, 36)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel8.setText("10");
+        nbreOperations.setFont(new java.awt.Font("Times New Roman", 1, 36)); // NOI18N
+        nbreOperations.setForeground(new java.awt.Color(255, 255, 255));
+        nbreOperations.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        nbreOperations.setText("10");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -399,7 +487,7 @@ public class AdminDashboard extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(57, 57, 57)
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nbreOperations, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
         );
@@ -408,9 +496,82 @@ public class AdminDashboard extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nbreOperations, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jPanel5.setBackground(new java.awt.Color(0, 153, 153));
+        jPanel5.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        jLabel8.setFont(new java.awt.Font("Verdana", 0, 24)); // NOI18N
+        jLabel8.setText("Système");
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/balance.png"))); // NOI18N
+        jLabel9.setText("Balance :");
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/billet.png"))); // NOI18N
+        jLabel10.setText("Nombre de Billet:");
+
+        nbreBillet.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        nbreBillet.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+
+        balance.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        balance.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(nbreBillet, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(balance, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(44, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(142, 142, 142))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(35, 35, 35)
+                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(balance, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(33, 33, 33)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nbreBillet, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(55, Short.MAX_VALUE))
+        );
+
+        jButton8.setBackground(new java.awt.Color(51, 204, 0));
+        jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/add.png"))); // NOI18N
+        jButton8.setText("Ajouter Agent Papier");
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
+
+        jButton9.setBackground(new java.awt.Color(0, 153, 204));
+        jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh.png"))); // NOI18N
+        jButton9.setText("Actualiser");
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout bDashboardLayout = new javax.swing.GroupLayout(bDashboard);
         bDashboard.setLayout(bDashboardLayout);
@@ -418,12 +579,23 @@ public class AdminDashboard extends javax.swing.JFrame {
             bDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bDashboardLayout.createSequentialGroup()
                 .addGap(40, 40, 40)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42))
+                .addGroup(bDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bDashboardLayout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(42, 42, 42)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(bDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bDashboardLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(42, 42, 42))
+                    .addGroup(bDashboardLayout.createSequentialGroup()
+                        .addGap(60, 60, 60)
+                        .addGroup(bDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton9)
+                            .addComponent(jButton8))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         bDashboardLayout.setVerticalGroup(
             bDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -434,7 +606,17 @@ public class AdminDashboard extends javax.swing.JFrame {
                     .addGroup(bDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(317, Short.MAX_VALUE))
+                .addGroup(bDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bDashboardLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(bDashboardLayout.createSequentialGroup()
+                        .addGap(76, 76, 76)
+                        .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(46, 46, 46)
+                        .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         body.addTab("tab1", bDashboard);
@@ -642,22 +824,67 @@ public class AdminDashboard extends javax.swing.JFrame {
         bTransaction.setBackground(new java.awt.Color(255, 255, 255));
         bTransaction.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel11.setText("Page Transaction");
-        bTransaction.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 110, 240, 50));
+        tabTransaction.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(tabTransaction);
+
+        bTransaction.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 90, 660, 330));
+
+        jLabel11.setFont(new java.awt.Font("Times New Roman", 0, 36)); // NOI18N
+        jLabel11.setText("Liste des dernières Transactions");
+        bTransaction.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 30, 480, 30));
 
         body.addTab("tab4", bTransaction);
 
         history.setBackground(new java.awt.Color(255, 255, 255));
 
+        jLabel12.setFont(new java.awt.Font("Times New Roman", 0, 36)); // NOI18N
+        jLabel12.setText("Liste des dernières Historiques");
+
+        tabHistoriques.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane3.setViewportView(tabHistoriques);
+
         javax.swing.GroupLayout historyLayout = new javax.swing.GroupLayout(history);
         history.setLayout(historyLayout);
         historyLayout.setHorizontalGroup(
             historyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 745, Short.MAX_VALUE)
+            .addGroup(historyLayout.createSequentialGroup()
+                .addGroup(historyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(historyLayout.createSequentialGroup()
+                        .addGap(121, 121, 121)
+                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(historyLayout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 682, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
         historyLayout.setVerticalGroup(
             historyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 432, Short.MAX_VALUE)
+            .addGroup(historyLayout.createSequentialGroup()
+                .addGap(106, 106, 106)
+                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         body.addTab("tab5", history);
@@ -796,7 +1023,10 @@ public class AdminDashboard extends javax.swing.JFrame {
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
-        
+        JFrame form = new FormUnlockAccess();
+        form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            form.setResizable(false);
+            form.setVisible(true);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -806,6 +1036,19 @@ public class AdminDashboard extends javax.swing.JFrame {
             form.setResizable(false);
             form.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+        JFrame form = new AddMoney();
+        form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            form.setResizable(false);
+            form.setVisible(true);
+    }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        // TODO add your handling code here:
+        guichet();
+    }//GEN-LAST:event_jButton9ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -848,6 +1091,7 @@ public class AdminDashboard extends javax.swing.JFrame {
     private javax.swing.JPanel bCompte;
     private javax.swing.JPanel bDashboard;
     private javax.swing.JPanel bTransaction;
+    private javax.swing.JLabel balance;
     private javax.swing.JPanel bclient;
     private javax.swing.JTabbedPane body;
     private javax.swing.JPanel header;
@@ -859,8 +1103,12 @@ public class AdminDashboard extends javax.swing.JFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
+    private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -868,14 +1116,20 @@ public class AdminDashboard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel loginDate;
+    private javax.swing.JLabel nbreBillet;
     private javax.swing.JLabel nbreClients;
     private javax.swing.JLabel nbreComptes;
+    private javax.swing.JLabel nbreOperations;
     private javax.swing.JLabel sClients;
     private javax.swing.JLabel sComptes;
     private javax.swing.JLabel sDashboard;
@@ -887,6 +1141,8 @@ public class AdminDashboard extends javax.swing.JFrame {
     private javax.swing.JLabel subHeaderTitle;
     private javax.swing.JTable tabClient;
     private javax.swing.JTable tabCompte;
+    private javax.swing.JTable tabHistoriques;
+    private javax.swing.JTable tabTransaction;
     private javax.swing.JLabel user_name;
     // End of variables declaration//GEN-END:variables
 }

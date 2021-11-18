@@ -161,40 +161,44 @@ public class AddCompte extends javax.swing.JFrame {
         var type = cpte_type.getSelectedItem().toString();
         ResultSet rs = null;
         ResultSet rsMarge = null;
+        String regex = "^[0-9]+$";
         
         boolean legal = true;
         
         if(solde.isEmpty()){
             JOptionPane.showMessageDialog(null, "Veuillez renseigner tous les champs");
         }else{
-            Compte cpt = new Compte(Float.parseFloat(solde), etat, code, type, new Date());
-            if(!type.equals("Compte Cheque")){
-                rs = db.getCompteByCode("Compte Cheque");
-                rsMarge = db.getCompteByCode("Marge Credit");
-                try {
-                    if(rs.next()){
-                        if(rsMarge.next()){
+            if(solde.matches(regex)){
+                Compte cpt = new Compte(Float.parseFloat(solde), etat, code, type, new Date());
+                if(!type.equals("Compte Cheque")){
+                    rs = db.getCompteByType("Compte Cheque", code);
+                    rsMarge = db.getCompteByType("Marge Credit", code);
+                    try {
+                        if(rs.next()){
+                            if(rsMarge.next()){
+                                legal = false;
+                                JOptionPane.showMessageDialog(null, "Le client a déjà une Marge de Crédit");
+                            }
+                        }else{                        
+                            JOptionPane.showMessageDialog(null, "Le client n'a pas de Compte Chéque");
                             legal = false;
-                            JOptionPane.showMessageDialog(null, "Le client a déjà une Marge de Crédit");
                         }
-                    }else{                        
-                        JOptionPane.showMessageDialog(null, "Le client n'a pas de Compte Chéque");
-                        legal = false;
+                    } catch (SQLException ex) {
+                        Logger.getLogger(AddCompte.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } catch (SQLException ex) {
-                    Logger.getLogger(AddCompte.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-            
-            if(legal){
-                if(db.addCompte(cpt)){
-                    JOptionPane.showMessageDialog(null, "Compte ajouté avec succès");
-                    this.dispose();
-                }else{
-                    JOptionPane.showMessageDialog(null, "Erreur d'ajout");
+
+                if(legal){
+                    if(db.addCompte(cpt)){
+                        JOptionPane.showMessageDialog(null, "Compte ajouté avec succès");
+                        this.dispose();
+                    }else{
+                        JOptionPane.showMessageDialog(null, "Erreur d'ajout");
+                    }
                 }
-            }
-            
+            }else{
+                JOptionPane.showMessageDialog(null, "Veuillez entrer un montant positif");
+            }           
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

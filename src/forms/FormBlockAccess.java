@@ -4,6 +4,14 @@
  */
 package forms;
 
+import dataBase.Connexion;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
+
 /**
  *
  * @author Mariéme
@@ -14,11 +22,17 @@ public class ClientDashboard extends javax.swing.JPanel {
 public class FormBlockAccess extends javax.swing.JFrame {
 >>>>>>> dev:src/forms/FormBlockAccess.java
 
+    private Connexion db;
     /**
      * Creates new form FormBlockAccess
      */
     public FormBlockAccess() {
         initComponents();
+        try {
+            db = new Connexion();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(FormBlockAccess.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -31,6 +45,7 @@ public class FormBlockAccess extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+<<<<<<< HEAD
 <<<<<<< HEAD:src/forms/ClientDashboard.java
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -42,6 +57,9 @@ public class FormBlockAccess extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
 =======
         jTextField1 = new javax.swing.JTextField();
+=======
+        code_client = new javax.swing.JTextField();
+>>>>>>> dev
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
 >>>>>>> dev:src/forms/FormBlockAccess.java
@@ -107,7 +125,7 @@ public class FormBlockAccess extends javax.swing.JFrame {
         );
 =======
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 20, 220, 30));
+        jPanel1.add(code_client, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 20, 220, 30));
 
         jLabel1.setFont(new java.awt.Font("Agency FB", 0, 18)); // NOI18N
         jLabel1.setText("Code Client :");
@@ -118,6 +136,11 @@ public class FormBlockAccess extends javax.swing.JFrame {
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/lock.png"))); // NOI18N
         jButton1.setText("Bloquer");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(223, 63, 100, 30));
 >>>>>>> dev:src/forms/FormBlockAccess.java
 
@@ -183,6 +206,7 @@ public class FormBlockAccess extends javax.swing.JFrame {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+<<<<<<< HEAD
 <<<<<<< HEAD:src/forms/ClientDashboard.java
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
@@ -200,6 +224,29 @@ public class FormBlockAccess extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JToggleButton jToggleButton1;
 =======
+=======
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        
+        ResultSet rs = db.getClientByCode(code_client.getText());
+        
+        try {
+            if(rs.next()){
+                if(db.bloquerAcces(rs.getString("code"))){
+                    JOptionPane.showMessageDialog(null, "L'accès bloqué avec succès");
+                    this.dispose();
+                }else{
+                    JOptionPane.showMessageDialog(null, "Une erreur est survenue");
+                }
+            }else{
+                JOptionPane.showMessageDialog(null, "Code inexistant");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(FormBlockAccess.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+>>>>>>> dev
     /**
      * @param args the command line arguments
      */
@@ -236,10 +283,14 @@ public class FormBlockAccess extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField code_client;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+<<<<<<< HEAD
     private javax.swing.JTextField jTextField1;
 >>>>>>> dev:src/forms/FormBlockAccess.java
+=======
+>>>>>>> dev
     // End of variables declaration//GEN-END:variables
 }

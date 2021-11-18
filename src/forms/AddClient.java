@@ -183,7 +183,7 @@ public class AddClient extends javax.swing.JFrame {
         var tel = cli_tel.getText();
         var sexe = cli_sexe.getSelectedItem().toString();
         var code = cli_code.getText();
-        var nip = cli_nip.getText().toString();
+        var nip = cli_nip.getText();
         
         String regex = "^[0-9]+$";
         

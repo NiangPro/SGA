@@ -18,12 +18,46 @@ import java.sql.SQLException;
  */
 public class Operation {
     private Float montant;
-    private TypeOp type;
-    private Date dateOp;    
+    private String typeOpt;
+    private Date date;    
     private String numCpt;
     private Connexion db;
     private Compte compte;
+    private int nbreBillet;
+    private String numOpt;
 
+    public String getNumOpt() {
+        return numOpt;
+    }
+
+    public final void setNumOpt(String numOpt) {
+        this.numOpt = numOpt;
+    }
+
+    public int getNbreBillet() {
+        return nbreBillet;
+    }
+
+    public void setNbreBillet(int nbreBillet) {
+        this.nbreBillet = nbreBillet;
+    }
+
+    
+    public String getTypeOpt() {
+        return typeOpt;
+    }
+
+    public void setTypeOpt(String typeOpt) {
+        this.typeOpt = typeOpt;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
     public Connexion getDb() {
         return db;
     }
@@ -57,27 +91,13 @@ public class Operation {
         this.montant = montant;
     }
 
-    public TypeOp getType() {
-        return type;
-    }
 
-    public void setType(TypeOp type) {
-        this.type = type;
-    }
-
-    public Date getDateOp() {
-        return dateOp;
-    }
-
-    public void setDateOp(Date dateOp) {
-        this.dateOp = dateOp;
-    }
-
-    public Operation(String numCpt, Float montant, TypeOp type, Date dateOp) {
+    public Operation(String numCpt, Float montant, String typeOpt, Date date, int nbreBillet) {
         this.montant = montant;
-        this.type = type;
-        this.dateOp = dateOp;
+        this.typeOpt = typeOpt;
+        this.date = date;
         this.numCpt = numCpt;
+        this.nbreBillet = nbreBillet;
         
         try {
             this.db = new Connexion();
@@ -94,6 +114,9 @@ public class Operation {
         } catch (SQLException ex) {
             Logger.getLogger(Operation.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        int nbre = this.db.nbreOperations()+1;
+        this.setNumOpt("Opt000"+nbre);
     }
             
     public static enum TypeOp{
